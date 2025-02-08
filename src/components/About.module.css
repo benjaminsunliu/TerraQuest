@@ -1,0 +1,178 @@
+.container {
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 1rem;
+  margin-bottom: 4rem;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(45deg, #4fd1c5, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.problem {
+  text-align: center;
+  margin-bottom: 6rem;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+}
+
+.stat h3 {
+  font-size: 2.5rem;
+  color: #4fd1c5;
+  margin-bottom: 1rem;
+}
+
+.features, .scenarios {
+  margin-bottom: 6rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  background: linear-gradient(45deg, #4fd1c5, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.featureGrid, .scenarioGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.featureCard, .scenarioCard {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover, .scenarioCard:hover {
+  transform: translateY(-5px);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.featureCard h3, .scenarioCard h3 {
+  font-size: 1.5rem;
+  color: #4fd1c5;
+  margin-bottom: 1rem;
+}
+
+.impactList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.impactTag {
+  background: rgba(79, 209, 197, 0.1);
+  color: #4fd1c5;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.faq {
+  max-width: 800px;
+  margin: 0 auto 6rem;
+}
+
+.faqItem {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.faqQuestion {
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faqQuestion h3 {
+  font-size: 1.2rem;
+  color: white;
+  margin: 0;
+}
+
+.faqIcon {
+  font-size: 1.5rem;
+  color: #4fd1c5;
+}
+
+.faqAnswer {
+  padding: 0 1.5rem 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.faqItem.open {
+  background: rgba(79, 209, 197, 0.1);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  .stat h3 {
+    font-size: 2rem;
+  }
+
+  .featureGrid, .scenarioGrid {
+    grid-template-columns: 1fr;
+  }
+} 

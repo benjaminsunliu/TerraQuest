@@ -1,0 +1,13 @@
+.app {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1a365d, #2a4365);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
