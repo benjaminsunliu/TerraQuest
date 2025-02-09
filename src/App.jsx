@@ -6,6 +6,9 @@ import About from "./components/About";
 import Space from "./components/Space"; // Import Space Page
 import Ocean from "./components/Ocean";
 import Earth from "./components/Earth";
+import Learning from './components/Learning';
+import Community from './components/Community';
+import Contact from './components/Contact';
 
 import "./App.css";
 
@@ -33,6 +36,9 @@ function App() {
           {/* Add other game routes when implemented */}
           <Route path="/mining" element={<Earth />} />
           <Route path="/ocean" element={<Ocean />} />
+          <Route path="/learning" element={<Learning />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
     </div>

@@ -1,0 +1,191 @@
+.community-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6rem 2rem 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a192f 100%);
+}
+
+.community-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  background: linear-gradient(45deg, #4fd1c5, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.community-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(79, 209, 197, 0.4);
+}
+
+.tab-button.active {
+  background: rgba(79, 209, 197, 0.2);
+  border-color: #4fd1c5;
+  color: #4fd1c5;
+}
+
+.community-content {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.stories-grid,
+.initiatives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.story-card,
+.discussion-card,
+.initiative-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.story-card:hover,
+.discussion-card:hover,
+.initiative-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(79, 209, 197, 0.4);
+}
+
+.story-author,
+.discussion-meta {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.story-content {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.story-stats,
+.initiative-stats {
+  display: flex;
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.suggestion-form {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.suggestion-input,
+.suggestion-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.suggestion-textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.submit-button,
+.join-button {
+  background: #4fd1c5;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover,
+.join-button:hover {
+  background: #38b2ac;
+  transform: translateY(-2px);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+}
+
+.status-badge.active {
+  background: rgba(72, 187, 120, 0.2);
+  color: #48bb78;
+}
+
+.status-badge.planning {
+  background: rgba(236, 201, 75, 0.2);
+  color: #ecc94b;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .community-container {
+    padding: 5rem 1rem 1rem;
+  }
+
+  .community-container h1 {
+    font-size: 2rem;
+  }
+
+  .community-tabs {
+    flex-direction: column;
+    padding: 0 1rem;
+  }
+
+  .tab-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .suggestion-form {
+    padding: 1rem;
+  }
+} 

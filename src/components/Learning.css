@@ -1,0 +1,124 @@
+.learning-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6rem 2rem 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a192f 100%);
+}
+
+.learning-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  background: linear-gradient(45deg, #4fd1c5, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.learning-section {
+  margin-bottom: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(79, 209, 197, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.learning-section h2 {
+  color: #4fd1c5;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(79, 209, 197, 0.2);
+  padding-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.resource-grid,
+.case-studies,
+.guides-list,
+.careers-grid,
+.tutorials-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.resource-card,
+.case-study-card,
+.guide-item,
+.career-card,
+.tutorial-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  border-radius: 15px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.resource-card:hover,
+.case-study-card:hover,
+.guide-item:hover,
+.career-card:hover,
+.tutorial-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(79, 209, 197, 0.4);
+}
+
+.resource-card h3,
+.case-study-card h3,
+.guide-item h3,
+.career-card h3,
+.tutorial-card h3 {
+  color: #4fd1c5;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.resource-card p,
+.case-study-card p,
+.guide-item p,
+.career-card p,
+.tutorial-card p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .learning-container {
+    padding: 5rem 1rem 1rem;
+  }
+  
+  .learning-container h1 {
+    font-size: 2rem;
+  }
+
+  .learning-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .resource-grid,
+  .case-studies,
+  .guides-list,
+  .careers-grid,
+  .tutorials-container {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-section {
+    padding: 1.5rem;
+  }
+} 
