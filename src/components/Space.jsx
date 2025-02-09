@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import StoryOverlay from "./StoryOverlay";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Define available themes
 const STORY_THEMES = [
@@ -42,6 +43,7 @@ const Space = () => {
   const [previousScenes, setPreviousScenes] = useState([]);
   const [totalScenes, setTotalScenes] = useState(0);
   const [currentTheme, setCurrentTheme] = useState(null);
+  const navigate = useNavigate();
 
   // Select random theme and generate initial scene
   useEffect(() => {
@@ -116,80 +118,106 @@ const Space = () => {
   };
 
   useEffect(() => {
-    // Scene, Camera, Renderer
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75, 
-      window.innerWidth / window.innerHeight, 
-      0.1, 
-      1000
-    );
-    camera.position.set(0, 0, 15); // Center the camera
-    camera.lookAt(0, 0, 0);
+    let scene, camera, renderer, planet, stars, light, animationFrameId;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    mountRef.current.appendChild(renderer.domElement);
+    const init = () => {
+      // Scene, Camera, Renderer
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(
+        75, 
+        window.innerWidth / window.innerHeight, 
+        0.1, 
+        1000
+      );
+      camera.position.set(0, 0, 15); // Center the camera
+      camera.lookAt(0, 0, 0);
 
-    // Ensure the canvas is centered properly
-    renderer.domElement.style.position = "absolute";
-    renderer.domElement.style.top = "50%";
-    renderer.domElement.style.left = "50%";
-    renderer.domElement.style.transform = "translate(-50%, -50%)";
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      mountRef.current.appendChild(renderer.domElement);
 
-    // Background - Stars
-    const starGeometry = new THREE.BufferGeometry();
-    const starVertices = [];
-    for (let i = 0; i < 6000; i++) {
-      starVertices.push((Math.random() - 0.5) * 2000);
-      starVertices.push((Math.random() - 0.5) * 2000);
-      starVertices.push((Math.random() - 0.5) * 2000);
-    }
-    starGeometry.setAttribute("position", new THREE.Float32BufferAttribute(starVertices, 3));
-    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
-    const stars = new THREE.Points(starGeometry, starMaterial);
-    scene.add(stars);
+      // Ensure the canvas is centered properly
+      renderer.domElement.style.position = "absolute";
+      renderer.domElement.style.top = "50%";
+      renderer.domElement.style.left = "50%";
+      renderer.domElement.style.transform = "translate(-50%, -50%)";
 
-    // Planet - Sphere with Texture
-    const textureLoader = new THREE.TextureLoader();
-    const planetTexture = textureLoader.load(
-      "https://upload.wikimedia.org/wikipedia/commons/8/86/Earth_from_Space.jpg"
-    );
-    const planet = new THREE.Mesh(
-      new THREE.SphereGeometry(5, 64, 64),
-      new THREE.MeshStandardMaterial({ map: planetTexture })
-    );
-    planet.position.set(0, 0, 0);
-    scene.add(planet);
+      // Background - Stars
+      const starGeometry = new THREE.BufferGeometry();
+      const starVertices = [];
+      for (let i = 0; i < 6000; i++) {
+        starVertices.push((Math.random() - 0.5) * 2000);
+        starVertices.push((Math.random() - 0.5) * 2000);
+        starVertices.push((Math.random() - 0.5) * 2000);
+      }
+      starGeometry.setAttribute("position", new THREE.Float32BufferAttribute(starVertices, 3));
+      const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+      stars = new THREE.Points(starGeometry, starMaterial);
+      scene.add(stars);
 
-    // Lighting
-    const light = new THREE.PointLight(0xffffff, 1.5, 100);
-    light.position.set(10, 10, 10);
-    scene.add(light);
+      // Planet - Sphere with Texture
+      const textureLoader = new THREE.TextureLoader();
+      const planetTexture = textureLoader.load(
+        "https://upload.wikimedia.org/wikipedia/commons/8/86/Earth_from_Space.jpg"
+      );
+      planet = new THREE.Mesh(
+        new THREE.SphereGeometry(5, 64, 64),
+        new THREE.MeshStandardMaterial({ map: planetTexture })
+      );
+      planet.position.set(0, 0, 0);
+      scene.add(planet);
 
-    // Animation Loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-      planet.rotation.y += 0.002;
-      stars.rotation.y += 0.0005;
-      renderer.render(scene, camera);
+      // Lighting
+      light = new THREE.PointLight(0xffffff, 1.5, 100);
+      light.position.set(10, 10, 10);
+      scene.add(light);
     };
+
+    const animate = () => {
+      animationFrameId = requestAnimationFrame(animate);
+      if (planet) planet.rotation.y += 0.002;
+      if (stars) stars.rotation.y += 0.0005;
+      renderer?.render(scene, camera);
+    };
+
+    const handleResize = () => {
+      if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+    };
+
+    init();
     animate();
 
-    // Handle Window Resize
-    const handleResize = () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-    };
     window.addEventListener("resize", handleResize);
 
-    // Cleanup
+    // Cleanup function
     return () => {
-      mountRef.current.removeChild(renderer.domElement);
       window.removeEventListener("resize", handleResize);
-      renderer.dispose();
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      if (renderer) {
+        renderer.dispose();
+        mountRef.current?.removeChild(renderer.domElement);
+      }
+      if (scene) {
+        scene.traverse((object) => {
+          if (object.geometry) {
+            object.geometry.dispose();
+          }
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach(material => material.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        });
+      }
     };
   }, []);
 
@@ -210,6 +238,31 @@ const Space = () => {
           backgroundColor: "black",
         }}
       />
+      <div 
+        onClick={() => navigate('/')}
+        style={{
+          position: 'fixed',
+          top: '20px',
+          left: '20px',
+          cursor: 'pointer',
+          zIndex: 1000,
+          background: 'rgba(255, 255, 255, 0.2)',
+          padding: '10px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <svg 
+          width="24" 
+          height="24" 
+          viewBox="0 0 24 24" 
+          fill="white"
+        >
+          <path d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+        </svg>
+      </div>
       {(currentScene || isLoading) && (
         <StoryOverlay 
           currentScene={currentScene || null}

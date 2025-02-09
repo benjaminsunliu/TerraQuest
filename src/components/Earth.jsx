@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import StoryOverlay from "./StoryOverlay";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Define available themes
 const MINING_THEMES = [
@@ -42,6 +43,7 @@ const Earth = () => {
   const [previousScenes, setPreviousScenes] = useState([]);
   const [totalScenes, setTotalScenes] = useState(0);
   const [currentTheme, setCurrentTheme] = useState(null);
+  const navigate = useNavigate();
 
   // Select random theme and generate initial scene
   useEffect(() => {
@@ -225,6 +227,31 @@ const Earth = () => {
           overflow: "hidden"
         }}
       />
+      <div 
+        onClick={() => navigate('/')}
+        style={{
+          position: 'fixed',
+          top: '20px',
+          left: '20px',
+          cursor: 'pointer',
+          zIndex: 1000,
+          background: 'rgba(255, 255, 255, 0.2)',
+          padding: '10px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <svg 
+          width="24" 
+          height="24" 
+          viewBox="0 0 24 24" 
+          fill="white"
+        >
+          <path d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+        </svg>
+      </div>
       {(currentScene || isLoading) && (
         <StoryOverlay 
           currentScene={currentScene || null}
