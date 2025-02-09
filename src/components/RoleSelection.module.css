@@ -55,6 +55,24 @@
   line-height: 1.6;
 }
 
+.roleIcon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: #2c7a7b;
+  display: flex;
+  justify-content: center;
+}
+
+.roleIcon svg {
+  width: 64px;
+  height: 64px;
+  transition: transform 0.3s ease;
+}
+
+.roleCard:hover .roleIcon svg {
+  transform: scale(1.15);
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 2rem 1rem;

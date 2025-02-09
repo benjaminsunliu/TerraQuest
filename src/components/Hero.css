@@ -105,6 +105,25 @@
   line-height: 1.5;
 }
 
+/* Add these styles for the icons in Hero component */
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2c7a7b; /* Adjust color to match your theme */
+  display: flex;
+  justify-content: center;
+}
+
+.feature-icon svg {
+  width: 48px;
+  height: 48px;
+  transition: transform 0.2s ease;
+}
+
+.feature-card:hover .feature-icon svg {
+  transform: scale(1.1);
+}
+
 /* Scenarios Section */
 .scenarios {
   margin: 6rem 0;
@@ -139,8 +158,21 @@
 }
 
 .scenario-icon {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: #2c7a7b; /* Adjust color to match your theme */
+  display: flex;
+  justify-content: center;
+}
+
+.scenario-icon svg {
+  width: 48px;
+  height: 48px;
+  transition: transform 0.2s ease;
+}
+
+.scenario:hover .scenario-icon svg {
+  transform: scale(1.1);
 }
 
 .scenario h4 {

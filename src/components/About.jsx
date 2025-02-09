@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FaGamepad, FaRobot, FaChartBar } from 'react-icons/fa';
+import { GiMining, GiWaterRecycling, GiSpaceShuttle } from 'react-icons/gi';
 import styles from "./About.module.css";
 
 const About = () => {
@@ -10,17 +12,17 @@ const About = () => {
 
   const features = [
     {
-      icon: "🎮",
+      icon: <FaGamepad />,
       title: "Interactive Learning",
       description: "Experience real-world sustainability challenges through dynamic, AI-powered scenarios."
     },
     {
-      icon: "🤖",
+      icon: <FaRobot />,
       title: "AI-Powered Decisions",
       description: "Our GPT-4 powered system creates unique scenarios and adapts to your choices in real-time."
     },
     {
-      icon: "📊",
+      icon: <FaChartBar />,
       title: "Impact Tracking",
       description: "See how your decisions affect environmental, economic, and social factors in real-time."
     }
@@ -28,19 +30,19 @@ const About = () => {
 
   const scenarios = [
     {
-      icon: "🌎",
+      icon: <GiMining />,
       title: "Mining & Underground",
       description: "Balance resource extraction with environmental protection as a mining company CEO.",
       impact: ["Resource Management", "Worker Safety", "Environmental Protection"]
     },
     {
-      icon: "🌊",
+      icon: <GiWaterRecycling />,
       title: "Ocean Conservation",
       description: "Protect marine ecosystems while supporting local fishing communities.",
       impact: ["Marine Protection", "Local Economy", "Sustainable Fishing"]
     },
     {
-      icon: "🚀",
+      icon: <GiSpaceShuttle />,
       title: "Space Colonization",
       description: "Build and manage a sustainable Mars colony while facing unique challenges.",
       impact: ["Resource Efficiency", "Colony Growth", "Scientific Progress"]

@@ -84,9 +84,28 @@ h2 {
 }
 
 .icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
-  display: block;
+  color: #2c7a7b;
+  display: flex;
+  justify-content: center;
+}
+
+.icon svg {
+  width: 48px;
+  height: 48px;
+  transition: transform 0.2s ease;
+}
+
+.featureCard:hover .icon svg,
+.scenarioCard:hover .icon svg {
+  transform: scale(1.1);
+}
+
+.stat svg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 0.5rem;
 }
 
 .featureCard h3, .scenarioCard h3 {

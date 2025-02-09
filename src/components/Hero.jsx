@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { FaRobot, FaGlobeAmericas, FaGamepad } from 'react-icons/fa';
+import { GiMining, GiWaterRecycling, GiSpaceShuttle } from 'react-icons/gi';
 import "./Hero.css"
 
 function Hero() {
@@ -25,17 +27,17 @@ function Hero() {
         <h3 className="features-title">Why Play TerraQuest?</h3>
         <div className="features-grid">
           <div className="feature-card">
-            <span className="feature-emoji">🤖</span>
+            <span className="feature-icon"><FaRobot /></span>
             <h4>AI-Powered Storylines</h4>
             <p>Experience unique scenarios that adapt to your decisions</p>
           </div>
           <div className="feature-card">
-            <span className="feature-emoji">🌍</span>
+            <span className="feature-icon"><FaGlobeAmericas /></span>
             <h4>Real-World Impact</h4>
             <p>Learn how sustainability decisions affect our planet</p>
           </div>
           <div className="feature-card">
-            <span className="feature-emoji">🎮</span>
+            <span className="feature-icon"><FaGamepad /></span>
             <h4>Interactive Learning</h4>
             <p>Engage with complex environmental challenges</p>
           </div>
@@ -46,17 +48,17 @@ function Hero() {
         <h3 className="scenarios-title">Choose Your Path</h3>
         <div className="scenarios-preview">
           <div className="scenario">
-            <div className="scenario-icon">🌎</div>
+            <div className="scenario-icon"><GiMining /></div>
             <h4>Mining & Sustainability</h4>
             <p>Balance resource extraction with environmental protection</p>
           </div>
           <div className="scenario">
-            <div className="scenario-icon">🌊</div>
+            <div className="scenario-icon"><GiWaterRecycling /></div>
             <h4>Ocean Conservation</h4>
             <p>Protect marine ecosystems while supporting local economies</p>
           </div>
           <div className="scenario">
-            <div className="scenario-icon">🚀</div>
+            <div className="scenario-icon"><GiSpaceShuttle /></div>
             <h4>Space Colonization</h4>
             <p>Build a sustainable future beyond Earth</p>
           </div>

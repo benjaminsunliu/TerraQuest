@@ -19,6 +19,7 @@
     "openai": "^4.83.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.5",
     "three": "^0.173.0",
     "tree": "^0.1.3",
