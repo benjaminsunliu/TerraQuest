@@ -2,7 +2,16 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from './StoryOverlay.module.css';
 
-const StoryOverlay = ({ currentScene, onChoiceSelected, scores, gameEnded, assessment }) => {
+const LoadingScreen = ({ message = "Generating next scene..." }) => (
+  <div className={styles.loading}>
+    <div className={styles.loadingContent}>
+      <div className={styles.loadingSpinner}></div>
+      <p>{message}</p>
+    </div>
+  </div>
+);
+
+const StoryOverlay = ({ currentScene, onChoiceSelected, scores, gameEnded, assessment, isLoading, theme }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
 
@@ -33,8 +42,16 @@ const StoryOverlay = ({ currentScene, onChoiceSelected, scores, gameEnded, asses
   return (
     <div className={styles.overlay}>
       <div className={styles.storyBox}>
-        {!gameEnded ? (
+        {isLoading ? (
+          <LoadingScreen message={currentScene ? "Generating next scene..." : "Generating story..."} />
+        ) : !gameEnded ? (
           <>
+            {theme && (
+              <div className={styles.theme}>
+                <h2>{theme.name}</h2>
+                <p>{theme.description}</p>
+              </div>
+            )}
             <div className={styles.scores}>
               <span>🌱 Environment: {scores.environment}</span>
               <span>💰 Economy: {scores.economy}</span>
@@ -111,6 +128,12 @@ StoryOverlay.propTypes = {
     type: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     careers: PropTypes.arrayOf(PropTypes.string).isRequired
+  }),
+  isLoading: PropTypes.bool.isRequired,
+  theme: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
   })
 };
 

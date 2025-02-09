@@ -1,11 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import StoryOverlay from "./StoryOverlay";
-import { oceanStory, getPersonalityAssessment } from "../data/oceanStory";
+import axios from 'axios';
+
+// Define available themes
+const OCEAN_THEMES = [
+  {
+    id: 'conservation',
+    name: 'Marine Conservation and Protection',
+    description: 'Protect marine ecosystems and endangered species'
+  },
+  {
+    id: 'sustainable_fishing',
+    name: 'Sustainable Fishing Practices',
+    description: 'Balance fishing industry needs with ocean ecosystem health'
+  },
+  {
+    id: 'pollution',
+    name: 'Ocean Pollution Management',
+    description: 'Combat various forms of marine pollution and waste'
+  },
+  {
+    id: 'coastal',
+    name: 'Coastal Community Development',
+    description: 'Support coastal communities while protecting marine resources'
+  }
+];
 
 const Ocean = () => {
   const mountRef = useRef(null);
-  const [currentScene, setCurrentScene] = useState(oceanStory.start);
+  const [currentScene, setCurrentScene] = useState(null);
   const [scores, setScores] = useState({
     environment: 0,
     economy: 0,
@@ -13,6 +37,86 @@ const Ocean = () => {
   });
   const [gameEnded, setGameEnded] = useState(false);
   const [assessment, setAssessment] = useState(null);
+  const [playerChoices, setPlayerChoices] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [previousScenes, setPreviousScenes] = useState([]);
+  const [totalScenes, setTotalScenes] = useState(0);
+  const [currentTheme, setCurrentTheme] = useState(null);
+
+  // Select random theme and generate initial scene
+  useEffect(() => {
+    const fetchInitialScene = async () => {
+      setIsLoading(true);
+      try {
+        const randomTheme = OCEAN_THEMES[Math.floor(Math.random() * OCEAN_THEMES.length)];
+        setCurrentTheme(randomTheme);
+
+        const response = await axios.post('http://localhost:3001/api/generate-initial-scene', {
+          scenario: randomTheme.name
+        });
+        setCurrentScene(response.data);
+        setTotalScenes(1);
+      } catch (error) {
+        console.error('Error fetching initial scene:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialScene();
+  }, []);
+
+  const handleChoiceSelected = async (choice, impact) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-next-scene', {
+        scenario: currentTheme.name,
+        previousScenes: [...previousScenes, currentScene],
+        currentChoice: { ...choice, impact },
+        totalScenes: totalScenes
+      });
+
+      setPreviousScenes([...previousScenes, currentScene]);
+      setCurrentScene(response.data);
+      setTotalScenes(totalScenes + 1);
+
+      const newScores = {
+        environment: scores.environment + (impact?.environment || 0),
+        economy: scores.economy + (impact?.economy || 0),
+        social: scores.social + (impact?.social || 0)
+      };
+      setScores(newScores);
+
+      if (response.data.isEnding) {
+        await generateAssessment(newScores, choice);
+      }
+    } catch (error) {
+      console.error('Error generating next scene:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateAssessment = async (finalScores, finalChoice) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-assessment', {
+        scores: finalScores,
+        scenario: currentTheme.name,
+        playerChoices: [...playerChoices, { 
+          scene: currentScene.text,
+          choice: finalChoice
+        }]
+      });
+
+      setAssessment(response.data);
+      setGameEnded(true);
+    } catch (error) {
+      console.error('Error generating assessment:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     let scene, camera, renderer, clock, ocean;
@@ -102,25 +206,6 @@ const Ocean = () => {
     };
   }, []);
 
-  const handleChoiceSelected = (nextSceneId, impact) => {
-    const nextScene = oceanStory[nextSceneId];
-    
-    const newScores = {
-      environment: scores.environment + (impact?.environment || 0),
-      economy: scores.economy + (impact?.economy || 0),
-      social: scores.social + (impact?.social || 0)
-    };
-    
-    setScores(newScores);
-    setCurrentScene(nextScene);
-
-    if (nextScene.isEnding) {
-      const finalAssessment = getPersonalityAssessment(newScores);
-      setAssessment(finalAssessment);
-      setGameEnded(true);
-    }
-  };
-
   return (
     <>
       <div
@@ -134,13 +219,17 @@ const Ocean = () => {
           overflow: "hidden"
         }}
       />
-      <StoryOverlay
-        currentScene={currentScene}
-        onChoiceSelected={handleChoiceSelected}
-        scores={scores}
-        gameEnded={gameEnded}
-        assessment={assessment}
-      />
+      {(currentScene || isLoading) && (
+        <StoryOverlay 
+          currentScene={currentScene || null}
+          onChoiceSelected={handleChoiceSelected}
+          scores={scores}
+          gameEnded={gameEnded}
+          assessment={assessment}
+          isLoading={isLoading}
+          theme={currentTheme}
+        />
+      )}
     </>
   );
 };

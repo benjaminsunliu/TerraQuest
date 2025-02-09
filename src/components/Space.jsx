@@ -1,11 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import StoryOverlay from "./StoryOverlay";
-import { spaceStory, getPersonalityAssessment } from "../data/spaceStory";
+import axios from 'axios';
+
+// Define available themes
+const STORY_THEMES = [
+  {
+    id: 'space_exploration',
+    name: 'Space Exploration and Sustainable Colonization',
+    description: 'Lead humanity\'s expansion into space while maintaining sustainable practices'
+  },
+  {
+    id: 'infrastructure',
+    name: 'Creation of Self-Sustaining Infrastructure in Space',
+    description: 'Design and manage critical systems for long-term space habitation'
+  },
+  {
+    id: 'weather_monitoring',
+    name: 'Weather Monitoring and Natural Disaster Management',
+    description: 'Utilize space technology to protect Earth from natural disasters'
+  },
+  {
+    id: 'air_traffic',
+    name: 'Air Traffic Optimization and Management',
+    description: 'Revolutionize air transportation through advanced space-based systems'
+  }
+];
 
 const Space = () => {
   const mountRef = useRef(null);
-  const [currentScene, setCurrentScene] = useState(spaceStory.start);
+  const [currentScene, setCurrentScene] = useState(null);
   const [scores, setScores] = useState({
     environment: 0,
     economy: 0,
@@ -13,26 +37,81 @@ const Space = () => {
   });
   const [gameEnded, setGameEnded] = useState(false);
   const [assessment, setAssessment] = useState(null);
+  const [playerChoices, setPlayerChoices] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [previousScenes, setPreviousScenes] = useState([]);
+  const [totalScenes, setTotalScenes] = useState(0);
+  const [currentTheme, setCurrentTheme] = useState(null);
 
-  const handleChoiceSelected = (nextSceneId, impact) => {
-    // Get next scene first
-    const nextScene = spaceStory[nextSceneId];
-    
-    // Update scores with current choice impact
-    const newScores = {
-      environment: scores.environment + (impact?.environment || 0),
-      economy: scores.economy + (impact?.economy || 0),
-      social: scores.social + (impact?.social || 0)
+  // Select random theme and generate initial scene
+  useEffect(() => {
+    const fetchInitialScene = async () => {
+      setIsLoading(true);
+      try {
+        const randomTheme = STORY_THEMES[Math.floor(Math.random() * STORY_THEMES.length)];
+        setCurrentTheme(randomTheme);
+
+        const response = await axios.post('http://localhost:3001/api/generate-initial-scene', {
+          scenario: randomTheme.name
+        });
+        setCurrentScene(response.data);
+        setTotalScenes(1);
+      } catch (error) {
+        console.error('Error fetching initial scene:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    
-    setScores(newScores);
-    setCurrentScene(nextScene);
 
-    // If this is an ending scene
-    if (nextScene.isEnding) {
-      const finalAssessment = getPersonalityAssessment(newScores);
-      setAssessment(finalAssessment);
+    fetchInitialScene();
+  }, []);
+
+  const handleChoiceSelected = async (choice, impact) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-next-scene', {
+        scenario: currentTheme.name,
+        previousScenes: [...previousScenes, currentScene],
+        currentChoice: { ...choice, impact },
+        totalScenes: totalScenes
+      });
+
+      setPreviousScenes([...previousScenes, currentScene]);
+      setCurrentScene(response.data);
+      setTotalScenes(totalScenes + 1);
+
+      const newScores = {
+        environment: scores.environment + (impact?.environment || 0),
+        economy: scores.economy + (impact?.economy || 0),
+        social: scores.social + (impact?.social || 0)
+      };
+      setScores(newScores);
+
+      if (response.data.isEnding) {
+        await generateAssessment(newScores);
+      }
+    } catch (error) {
+      console.error('Error generating next scene:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateAssessment = async (finalScores) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-assessment', {
+        scores: finalScores,
+        scenario: currentTheme.name,
+        playerChoices
+      });
+
+      setAssessment(response.data);
       setGameEnded(true);
+    } catch (error) {
+      console.error('Error generating assessment:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -131,15 +210,44 @@ const Space = () => {
           backgroundColor: "black",
         }}
       />
-      <StoryOverlay 
-        currentScene={currentScene}
-        onChoiceSelected={handleChoiceSelected}
-        scores={scores}
-        gameEnded={gameEnded}
-        assessment={assessment}
-      />
+      {(currentScene || isLoading) && (
+        <StoryOverlay 
+          currentScene={currentScene || null}
+          onChoiceSelected={handleChoiceSelected}
+          scores={scores}
+          gameEnded={gameEnded}
+          assessment={assessment}
+          isLoading={isLoading}
+          theme={currentTheme}
+        />
+      )}
     </>
   );
+};
+
+// Local fallback assessment in case API fails
+const getLocalAssessment = (scores) => {
+  const { environment, economy, social } = scores;
+  
+  if (environment > economy && environment > social) {
+    return {
+      type: "Environmental Systems Engineer",
+      description: "You prioritize sustainable practices and environmental protection in space exploration.",
+      careers: ["Space Habitat Designer", "Environmental Systems Engineer", "Sustainability Coordinator"]
+    };
+  } else if (economy > environment && economy > social) {
+    return {
+      type: "Space Resource Manager",
+      description: "You excel at optimizing resources and maintaining economic viability in space operations.",
+      careers: ["Resource Management Specialist", "Space Economy Analyst", "Operations Director"]
+    };
+  } else {
+    return {
+      type: "Space Community Director",
+      description: "You understand the importance of human factors and community wellbeing in space colonization.",
+      careers: ["Colony Social Director", "Space Psychology Specialist", "Community Systems Manager"]
+    };
+  }
 };
 
 export default Space;

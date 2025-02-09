@@ -5,7 +5,10 @@ function Header() {
   return (
     <header className="header">
       <h1 className="logo">
-        <Link to="/" className="logo-link">TerraQuest</Link>
+        <Link to="/" className="logo-link">
+          <img src="/logo.png" alt="Terra Quest Logo" className="logo-image" />
+          TerraQuest
+        </Link>
       </h1>
       <nav>
         <ul className="nav-list">

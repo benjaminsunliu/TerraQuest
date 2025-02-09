@@ -1,11 +1,35 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import StoryOverlay from "./StoryOverlay";
-import { miningStory, getPersonalityAssessment } from "../data/miningStory";
+import axios from 'axios';
+
+// Define available themes
+const MINING_THEMES = [
+  {
+    id: 'sustainable_mining',
+    name: 'Sustainable Mining Practices',
+    description: 'Balance resource extraction with environmental protection'
+  },
+  {
+    id: 'community_impact',
+    name: 'Mining and Community Relations',
+    description: 'Manage relationships between mining operations and local communities'
+  },
+  {
+    id: 'innovation',
+    name: 'Mining Technology Innovation',
+    description: 'Implement cutting-edge technologies for safer and cleaner mining'
+  },
+  {
+    id: 'rehabilitation',
+    name: 'Land Rehabilitation and Conservation',
+    description: 'Restore and protect ecosystems affected by mining operations'
+  }
+];
 
 const Earth = () => {
   const mountRef = useRef(null);
-  const [currentScene, setCurrentScene] = useState(miningStory.start);
+  const [currentScene, setCurrentScene] = useState(null);
   const [scores, setScores] = useState({
     environment: 0,
     economy: 0,
@@ -13,6 +37,86 @@ const Earth = () => {
   });
   const [gameEnded, setGameEnded] = useState(false);
   const [assessment, setAssessment] = useState(null);
+  const [playerChoices, setPlayerChoices] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [previousScenes, setPreviousScenes] = useState([]);
+  const [totalScenes, setTotalScenes] = useState(0);
+  const [currentTheme, setCurrentTheme] = useState(null);
+
+  // Select random theme and generate initial scene
+  useEffect(() => {
+    const fetchInitialScene = async () => {
+      setIsLoading(true);
+      try {
+        const randomTheme = MINING_THEMES[Math.floor(Math.random() * MINING_THEMES.length)];
+        setCurrentTheme(randomTheme);
+
+        const response = await axios.post('http://localhost:3001/api/generate-initial-scene', {
+          scenario: randomTheme.name
+        });
+        setCurrentScene(response.data);
+        setTotalScenes(1);
+      } catch (error) {
+        console.error('Error fetching initial scene:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialScene();
+  }, []);
+
+  const handleChoiceSelected = async (choice, impact) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-next-scene', {
+        scenario: currentTheme.name,
+        previousScenes: [...previousScenes, currentScene],
+        currentChoice: { ...choice, impact },
+        totalScenes: totalScenes
+      });
+
+      setPreviousScenes([...previousScenes, currentScene]);
+      setCurrentScene(response.data);
+      setTotalScenes(totalScenes + 1);
+
+      const newScores = {
+        environment: scores.environment + (impact?.environment || 0),
+        economy: scores.economy + (impact?.economy || 0),
+        social: scores.social + (impact?.social || 0)
+      };
+      setScores(newScores);
+
+      if (response.data.isEnding) {
+        await generateAssessment(newScores, choice);
+      }
+    } catch (error) {
+      console.error('Error generating next scene:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateAssessment = async (finalScores, finalChoice) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/api/generate-assessment', {
+        scores: finalScores,
+        scenario: currentTheme.name,
+        playerChoices: [...playerChoices, { 
+          scene: currentScene.text,
+          choice: finalChoice
+        }]
+      });
+
+      setAssessment(response.data);
+      setGameEnded(true);
+    } catch (error) {
+      console.error('Error generating assessment:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     let scene, camera, renderer, earth, cloud, stars, clock;
@@ -108,25 +212,6 @@ const Earth = () => {
     };
   }, []);
 
-  const handleChoiceSelected = (nextSceneId, impact) => {
-    const nextScene = miningStory[nextSceneId];
-    
-    const newScores = {
-      environment: scores.environment + (impact?.environment || 0),
-      economy: scores.economy + (impact?.economy || 0),
-      social: scores.social + (impact?.social || 0)
-    };
-    
-    setScores(newScores);
-    setCurrentScene(nextScene);
-
-    if (nextScene.isEnding) {
-      const finalAssessment = getPersonalityAssessment(newScores);
-      setAssessment(finalAssessment);
-      setGameEnded(true);
-    }
-  };
-
   return (
     <>
       <div
@@ -140,13 +225,17 @@ const Earth = () => {
           overflow: "hidden"
         }}
       />
-      <StoryOverlay
-        currentScene={currentScene}
-        onChoiceSelected={handleChoiceSelected}
-        scores={scores}
-        gameEnded={gameEnded}
-        assessment={assessment}
-      />
+      {(currentScene || isLoading) && (
+        <StoryOverlay 
+          currentScene={currentScene || null}
+          onChoiceSelected={handleChoiceSelected}
+          scores={scores}
+          gameEnded={gameEnded}
+          assessment={assessment}
+          isLoading={isLoading}
+          theme={currentTheme}
+        />
+      )}
     </>
   );
 };

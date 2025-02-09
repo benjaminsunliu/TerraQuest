@@ -212,4 +212,56 @@
   .careers h4 {
     font-size: 1rem;
   }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.loadingContent {
+  text-align: center;
+  color: #fff;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(79, 209, 197, 0.3);
+  border-radius: 50%;
+  border-top-color: #4fd1c5;
+  animation: spin 1s ease-in-out infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingContent p {
+  font-size: 1.2em;
+  color: #4fd1c5;
+}
+
+.theme {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(79, 209, 197, 0.1);
+  border-radius: 10px;
+}
+
+.theme h2 {
+  color: #4fd1c5;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.theme p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
 } 
