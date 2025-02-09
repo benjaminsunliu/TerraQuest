@@ -1,4 +1,4 @@
-# TerraQuest: Une plateforme éducative interactive
+# TerraQuest: Prenez des décisions durables qui façonnent l’avenir !
 
 ### **🌍 Qu'est-ce que TerraQuest ?**
 
@@ -27,8 +27,8 @@ Bienvenue sur **TerraQuest**, une plateforme web éducative qui invite les utili
 - **Résultat:** Explorez les défis de la vie durable hors de la Terre.
 
 ### **🤝 Technologies utilisées**
-- **Frontend:** React.js avec vite
-- **Backend:** Express.js et OpenAI
+- **Frontend:** React.js, Three.js, Tailwind CSS
+- **Backend:** Express.js, Node.js, OpenAI API
 
 ### **🛠️ Installation locale**
 # Clonez le projet
@@ -55,14 +55,15 @@ $ cd server
 # Création d'un dossier .env
 Insérez ensuite une clé API de OpenAI intitulée "OPEN_API_KEY"
 
-# Installez les dépendances du back-end
+# Installez les dépendances du back-end et du frontend
 ```
 $ npm install
 ```
-# Lancez le serveur
+# Lancez le serveur et Lancez le projet
 
 ```
 $ node server
+$ npm run dev
 ```
 
 **Préparez-vous à faire des choix pour sauver la Terre (et au-delà) avec TerraQuest !** 🚀
